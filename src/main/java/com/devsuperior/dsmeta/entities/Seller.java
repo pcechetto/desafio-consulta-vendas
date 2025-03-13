@@ -2,6 +2,7 @@ package com.devsuperior.dsmeta.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -68,5 +69,9 @@ public class Seller {
 
 	public List<Sale> getSales() {
 		return sales;
-	}	
+	}
+
+	public Double getTotal() {
+		return sales.stream().mapToDouble(Sale::getAmount).sum();
+	}
 }
