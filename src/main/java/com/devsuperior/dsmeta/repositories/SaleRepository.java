@@ -1,5 +1,6 @@
 package com.devsuperior.dsmeta.repositories;
 
+import com.devsuperior.dsmeta.dto.ReportMinDTO;
 import com.devsuperior.dsmeta.dto.SummaryMinDTO;
 import com.devsuperior.dsmeta.entities.Sale;
 import org.springframework.data.domain.Page;
@@ -17,5 +18,20 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             "WHERE (:min IS NULL OR s.date >= :min) " +
             "AND (:max IS NULL OR s.date <= :max) " +
             "GROUP BY s.seller.name")
-    Page<SummaryMinDTO> searchSummary(Pageable pageable, @Param("min") LocalDate min, @Param("max") LocalDate max);
+    Page<SummaryMinDTO> searchSummary(
+            Pageable pageable,
+            @Param("min") LocalDate min,
+            @Param("max") LocalDate max);
+
+
+    @Query(value = "SELECT new com.devsuperior.dsmeta.dto.ReportMinDTO(s.id, s.date, s.amount, s.seller.name) " +
+            "FROM Sale s " +
+            "WHERE (:min IS NULL OR s.date >= :min) " +
+            "AND (:max IS NULL OR s.date <= :max) " +
+            "AND (:sellerName IS NULL OR LOWER(s.seller.name) LIKE LOWER(CONCAT('%', :sellerName, '%')))")
+    Page<ReportMinDTO> searchReport(
+            Pageable pageable,
+            @Param("min") LocalDate min,
+            @Param("max") LocalDate max,
+            @Param("sellerName") String sellerName);
 }

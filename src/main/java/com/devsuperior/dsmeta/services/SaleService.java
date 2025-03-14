@@ -1,5 +1,6 @@
 package com.devsuperior.dsmeta.services;
 
+import com.devsuperior.dsmeta.dto.ReportMinDTO;
 import com.devsuperior.dsmeta.dto.SaleMinDTO;
 import com.devsuperior.dsmeta.dto.SummaryMinDTO;
 import com.devsuperior.dsmeta.entities.Sale;
@@ -20,12 +21,13 @@ public class SaleService {
 
     private final SaleRepository repository;
 
-    public LocalDate today = LocalDate.ofInstant(now(), ZoneId.systemDefault());
-    public LocalDate result = today.minusYears(1L);
-
     public SaleService(SaleRepository repository) {
         this.repository = repository;
     }
+
+    public LocalDate today = LocalDate.ofInstant(now(), ZoneId.systemDefault());
+    public LocalDate result = today.minusYears(1L);
+
 
     public SaleMinDTO findById(Long id) {
         Optional<Sale> result = repository.findById(id);
@@ -34,10 +36,16 @@ public class SaleService {
     }
 
     public Page<SummaryMinDTO> findSummary(Pageable pageable, String minDate, String maxDate) {
-        // Convert String dates to LocalDate
         LocalDate min = minDate.isEmpty() ? null : LocalDate.parse(minDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDate max = maxDate.isEmpty() ? null : LocalDate.parse(maxDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         return repository.searchSummary(pageable, min, max);
+    }
+
+    public Page<ReportMinDTO> findReport(Pageable pageable, String minDate, String maxDate, String sellerName) {
+        LocalDate min = minDate.isEmpty() ? null : LocalDate.parse(minDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate max = maxDate.isEmpty() ? null : LocalDate.parse(maxDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        return repository.searchReport(pageable, min, max, sellerName);
     }
 }
